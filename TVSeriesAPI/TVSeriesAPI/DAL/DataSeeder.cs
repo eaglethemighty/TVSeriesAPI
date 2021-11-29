@@ -65,7 +65,7 @@ namespace TVSeriesAPI.DAL
                 Position = CastPosition.Actor,
             };
 
-            TVSerie serie1 = new TVSerie()
+            Serie serie1 = new Serie()
             {
                 Id = 1,
                 GenreId = genre1.Id,
@@ -73,7 +73,7 @@ namespace TVSeriesAPI.DAL
                 ReleaseYear = 2005
             };
 
-            TVSerie serie2 = new TVSerie()
+            Serie serie2 = new Serie()
             {
                 Id = 2,
                 GenreId = genre2.Id,
@@ -81,7 +81,7 @@ namespace TVSeriesAPI.DAL
                 ReleaseYear = 2013
             };
 
-            TVSerie serie3 = new TVSerie()
+            Serie serie3 = new Serie()
             {
                 Id = 3,
                 GenreId = genre3.Id,
@@ -89,7 +89,7 @@ namespace TVSeriesAPI.DAL
                 ReleaseYear = 2015
             };
 
-            TVSerie serie4 = new TVSerie()
+            Serie serie4 = new Serie()
             {
                 Id = 4,
                 GenreId = genre4.Id,
@@ -97,7 +97,7 @@ namespace TVSeriesAPI.DAL
                 ReleaseYear = 2015
             };
 
-            TVSerie serie5 = new TVSerie()
+            Serie serie5 = new Serie()
             {
                 Id = 5,
                 GenreId = genre5.Id,
@@ -108,35 +108,35 @@ namespace TVSeriesAPI.DAL
             Season season1 = new Season()
             {
                 Id = 1,
-                TVSerieId = serie1.Id,
+                SerieId = serie1.Id,
                 Number = 1
             };
 
             Season season2 = new Season()
             {
                 Id = 2,
-                TVSerieId = serie2.Id,
+                SerieId = serie2.Id,
                 Number = 1
             };
 
             Season season3 = new Season()
             {
                 Id = 3,
-                TVSerieId = serie3.Id,
+                SerieId = serie3.Id,
                 Number = 1
             };
 
             Season season4 = new Season()
             {
                 Id = 4,
-                TVSerieId = serie4.Id,
+                SerieId = serie4.Id,
                 Number = 1
             };
 
             Season season5 = new Season()
             {
                 Id = 5,
-                TVSerieId = serie5.Id,
+                SerieId = serie5.Id,
                 Number = 1
             };
 
@@ -250,7 +250,7 @@ namespace TVSeriesAPI.DAL
             season4,
             season5});
 
-            builder.Entity<TVSerie>().HasData(new List<TVSerie>() {
+            builder.Entity<Serie>().HasData(new List<Serie>() {
             serie1,
             serie2,
             serie3,
