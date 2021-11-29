@@ -1,6 +1,6 @@
 ﻿namespace TVSeriesAPI.Models.Entities
 {
-    public class TVSerie
+    public class Serie
     {
         public int Id { get; set; }
         public string Title { get; set; } = null!;

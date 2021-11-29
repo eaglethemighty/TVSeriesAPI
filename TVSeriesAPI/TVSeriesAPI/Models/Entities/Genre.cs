@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public ICollection<TVSerie> TVSeries { get; set; } = null!;
+        public ICollection<Serie> Series { get; set; } = null!;
     }
 }
