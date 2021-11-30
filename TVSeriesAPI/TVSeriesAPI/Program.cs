@@ -8,6 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TVSeriesAPI.Authentication;
 using TVSeriesAPI.DAL;
+using TVSeriesAPI.DAL.Repositories;
+using TVSeriesAPI.DAL.Repositories.Interfaces;
+using TVSeriesAPI.Models.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,7 +58,14 @@ builder.Services.AddSwaggerGen(config =>
 });
 builder.Services.AddDbContext<TVSeriesDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TVSeriesDbConnection")));
+
 builder.Services.AddSingleton<IJwtAuth>(new JwtAuth(builder.Configuration["Jwt:Key"]));
+builder.Services.AddScoped<ICastMemberRepository, CastMemberRepository>();
+builder.Services.AddScoped<IEpisodeRepository, EpisodeRepository>();
+builder.Services.AddScoped<IEpisodeCastRepository, EpisodeCastRepository>();
+builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+builder.Services.AddScoped<ISeasonRepository, SeasonRepository>();
+builder.Services.AddScoped<ISerieRepository, SerieRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
