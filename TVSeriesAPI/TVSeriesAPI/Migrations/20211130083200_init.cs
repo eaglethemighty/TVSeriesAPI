@@ -4,7 +4,7 @@
 
 namespace TVSeriesAPI.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -121,6 +121,78 @@ namespace TVSeriesAPI.Migrations
                         principalTable: "Episodes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "CastMembers",
+                columns: new[] { "Id", "Name", "Position" },
+                values: new object[,]
+                {
+                    { 1, "Steve Carell", 0 },
+                    { 2, "Justin Roiland", 1 },
+                    { 3, "Bob Odenkirk", 0 },
+                    { 4, "Pedro Pascal", 0 },
+                    { 5, "Steven Avery", 0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Genres",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Comedy" },
+                    { 2, "Animated" },
+                    { 3, "Drama" },
+                    { 4, "Criminal" },
+                    { 5, "Documentary" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Series",
+                columns: new[] { "Id", "GenreId", "ReleaseYear", "Title" },
+                values: new object[,]
+                {
+                    { 1, 1, 2005, "The Office (US)" },
+                    { 2, 2, 2013, "Rick and Morty" },
+                    { 3, 3, 2015, "Better Call Saul" },
+                    { 4, 4, 2015, "Narcos" },
+                    { 5, 5, 2015, "Making a Murderer" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Seasons",
+                columns: new[] { "Id", "Number", "SerieId" },
+                values: new object[,]
+                {
+                    { 1, 1, 1 },
+                    { 2, 1, 2 },
+                    { 3, 1, 3 },
+                    { 4, 1, 4 },
+                    { 5, 1, 5 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Episodes",
+                columns: new[] { "Id", "Number", "SeasonId", "Title" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, "The American Office" },
+                    { 2, 1, 2, "Pilot" },
+                    { 3, 1, 3, "Uno" },
+                    { 4, 1, 4, "Descenso" },
+                    { 5, 1, 5, "Eighteen Years Lost" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "EpisodeCasts",
+                columns: new[] { "Id", "CastMemberId", "EpisodeId" },
+                values: new object[,]
+                {
+                    { 1, 1, 1 },
+                    { 2, 2, 2 },
+                    { 3, 3, 3 },
+                    { 4, 4, 4 },
+                    { 5, 5, 5 }
                 });
 
             migrationBuilder.CreateIndex(
