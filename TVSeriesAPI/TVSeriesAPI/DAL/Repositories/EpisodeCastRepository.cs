@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TVSeriesAPI.DAL.Repositories.Interfaces;
 using TVSeriesAPI.Models.Entities;
 
 namespace TVSeriesAPI.DAL.Repositories
 {
-    public class EpisodeCastRepository : IRepository<EpisodeCast>
+    public class EpisodeCastRepository : IEpisodeCastRepository
     {
         public EpisodeCastRepository(TVSeriesDbContext context)
         {

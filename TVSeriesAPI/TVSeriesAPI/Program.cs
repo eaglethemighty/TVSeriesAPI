@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using TVSeriesAPI.DAL;
+using TVSeriesAPI.DAL.Repositories;
+using TVSeriesAPI.DAL.Repositories.Interfaces;
+using TVSeriesAPI.Models.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TVSeriesDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TVSeriesDbConnection")));
+
+builder.Services.AddScoped<ICastMemberRepository, CastMemberRepository>();
+builder.Services.AddScoped<IEpisodeRepository, EpisodeRepository>();
+builder.Services.AddScoped<IEpisodeCastRepository, EpisodeCastRepository>();
+builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+builder.Services.AddScoped<ISeasonRepository, SeasonRepository>();
+builder.Services.AddScoped<ISerieRepository, SerieRepository>();
 
 var app = builder.Build();
 

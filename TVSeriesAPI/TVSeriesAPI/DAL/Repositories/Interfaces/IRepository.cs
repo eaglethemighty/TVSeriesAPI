@@ -1,4 +1,4 @@
-﻿namespace TVSeriesAPI.DAL.Repositories
+﻿namespace TVSeriesAPI.DAL.Repositories.Interfaces
 {
     public interface IRepository<TModel>
     {

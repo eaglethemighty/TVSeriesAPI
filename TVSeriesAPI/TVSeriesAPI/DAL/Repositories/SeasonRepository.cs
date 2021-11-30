@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TVSeriesAPI.DAL.Repositories.Interfaces;
 using TVSeriesAPI.Models.Entities;
 
 namespace TVSeriesAPI.DAL.Repositories
 {
-    public class SeasonRepository : IRepository<Season>
+    public class SeasonRepository : ISeasonRepository
     {
         public SeasonRepository(TVSeriesDbContext context)
         {
