@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,20 +14,23 @@ namespace TVSeriesAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public partial class SeriesController
+    public partial class SeriesController : Controller
     {
         private readonly ILogger<SeriesController> _logger;
+        private readonly IMapper _mapper;
         private readonly SerieRepository _serieRepository;
         private readonly SeasonRepository _seasonRepository;
         private readonly EpisodeRepository _episodeRepository;
 
         public SeriesController(
             ILogger<SeriesController> logger,
+            IMapper mapper,
             SerieRepository serieRepository, 
             SeasonRepository seasonRepository, 
             EpisodeRepository episodeRepository)
         {
             this._logger = logger;
+            this._mapper = mapper;
             this._serieRepository = serieRepository;
             this._seasonRepository = seasonRepository;
             this._episodeRepository = episodeRepository;
@@ -50,7 +54,14 @@ namespace TVSeriesAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<ICollection<SerieReadDto>>> GetSeries()
         {
-            throw new NotImplementedException();
+            var series = await _serieRepository.GetAll();
+            if (series is null || series.Count == 0)
+            {
+                return NotFound();
+            }
+            _mapper.Map<SerieReadDto>(series);
+
+            return Ok(series);
         }
 
         /// <summary>

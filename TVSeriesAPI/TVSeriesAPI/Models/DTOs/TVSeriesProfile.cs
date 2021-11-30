@@ -19,8 +19,8 @@ namespace TVSeriesAPI.Models.DTOs
             CreateMap<SeasonCreateDto, Season>();
             CreateMap<Season, SeasonReadDto>();
 
-            CreateMap<SeasonCreateDto, Serie>();
-            CreateMap<Season, SerieReadDto>();
+            CreateMap<SerieCreateDto, Serie>();
+            CreateMap<Serie, SerieReadDto>();
         }
     }
 }
