@@ -40,6 +40,38 @@ namespace TVSeriesAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CastMembers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Steve Carell",
+                            Position = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Justin Roiland",
+                            Position = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Bob Odenkirk",
+                            Position = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Pedro Pascal",
+                            Position = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Steven Avery",
+                            Position = 0
+                        });
                 });
 
             modelBuilder.Entity("TVSeriesAPI.Models.Entities.Episode", b =>
@@ -66,6 +98,43 @@ namespace TVSeriesAPI.Migrations
                     b.HasIndex("SeasonId");
 
                     b.ToTable("Episodes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Number = 1,
+                            SeasonId = 1,
+                            Title = "The American Office"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Number = 1,
+                            SeasonId = 2,
+                            Title = "Pilot"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Number = 1,
+                            SeasonId = 3,
+                            Title = "Uno"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Number = 1,
+                            SeasonId = 4,
+                            Title = "Descenso"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Number = 1,
+                            SeasonId = 5,
+                            Title = "Eighteen Years Lost"
+                        });
                 });
 
             modelBuilder.Entity("TVSeriesAPI.Models.Entities.EpisodeCast", b =>
@@ -89,6 +158,38 @@ namespace TVSeriesAPI.Migrations
                     b.HasIndex("EpisodeId");
 
                     b.ToTable("EpisodeCasts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CastMemberId = 1,
+                            EpisodeId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CastMemberId = 2,
+                            EpisodeId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CastMemberId = 3,
+                            EpisodeId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CastMemberId = 4,
+                            EpisodeId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CastMemberId = 5,
+                            EpisodeId = 5
+                        });
                 });
 
             modelBuilder.Entity("TVSeriesAPI.Models.Entities.Genre", b =>
@@ -107,6 +208,33 @@ namespace TVSeriesAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Genres");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Comedy"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Animated"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Drama"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Criminal"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Documentary"
+                        });
                 });
 
             modelBuilder.Entity("TVSeriesAPI.Models.Entities.Season", b =>
@@ -128,6 +256,38 @@ namespace TVSeriesAPI.Migrations
                     b.HasIndex("SerieId");
 
                     b.ToTable("Seasons");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Number = 1,
+                            SerieId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Number = 1,
+                            SerieId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Number = 1,
+                            SerieId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Number = 1,
+                            SerieId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Number = 1,
+                            SerieId = 5
+                        });
                 });
 
             modelBuilder.Entity("TVSeriesAPI.Models.Entities.Serie", b =>
@@ -154,6 +314,43 @@ namespace TVSeriesAPI.Migrations
                     b.HasIndex("GenreId");
 
                     b.ToTable("Series");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            GenreId = 1,
+                            ReleaseYear = 2005,
+                            Title = "The Office (US)"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            GenreId = 2,
+                            ReleaseYear = 2013,
+                            Title = "Rick and Morty"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            GenreId = 3,
+                            ReleaseYear = 2015,
+                            Title = "Better Call Saul"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            GenreId = 4,
+                            ReleaseYear = 2015,
+                            Title = "Narcos"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            GenreId = 5,
+                            ReleaseYear = 2015,
+                            Title = "Making a Murderer"
+                        });
                 });
 
             modelBuilder.Entity("TVSeriesAPI.Models.Entities.Episode", b =>
