@@ -16,15 +16,15 @@ namespace TVSeriesAPI.Controllers
     public partial class SeriesController
     {
         private readonly ILogger<SeriesController> _logger;
-        private readonly IRepository<Serie> _serieRepository;
-        private readonly IRepository<Season> _seasonRepository;
-        private readonly IRepository<Episode> _episodeRepository;
+        private readonly SerieRepository _serieRepository;
+        private readonly SeasonRepository _seasonRepository;
+        private readonly EpisodeRepository _episodeRepository;
 
         public SeriesController(
-            ILogger<SeriesController> logger, 
-            IRepository<Serie> serieRepository, 
-            IRepository<Season> seasonRepository, 
-            IRepository<Episode> episodeRepository)
+            ILogger<SeriesController> logger,
+            SerieRepository serieRepository, 
+            SeasonRepository seasonRepository, 
+            EpisodeRepository episodeRepository)
         {
             this._logger = logger;
             this._serieRepository = serieRepository;
