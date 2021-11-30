@@ -16,5 +16,10 @@ namespace TVSeriesAPI.DAL
             : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.SeedData();
+        }
     }
 }
