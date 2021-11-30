@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using TVSeriesAPI.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,8 @@ builder.Services.AddSwaggerGen(config =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     config.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+builder.Services.AddDbContext<TVSeriesDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TVSeriesDbConnection")));
 
 var app = builder.Build();
 
