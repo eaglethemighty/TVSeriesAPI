@@ -57,7 +57,6 @@ builder.Services.AddSwaggerGen(config =>
 builder.Services.AddDbContext<TVSeriesDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TVSeriesDbConnection")));
 
-builder.Services.AddSingleton<IJwtAuth>(new JwtAuth(builder.Configuration["Jwt:Key"]));
 builder.Services.AddScoped<BaseRepository<CastMember>, CastMemberRepository>();
 builder.Services.AddScoped<BaseRepository<Episode>, EpisodeRepository>();
 builder.Services.AddScoped<BaseRepository<EpisodeCast>, EpisodeCastRepository>();
@@ -65,6 +64,8 @@ builder.Services.AddScoped<BaseRepository<Genre>, GenreRepository>();
 builder.Services.AddScoped<BaseRepository<Season>, SeasonRepository>();
 builder.Services.AddScoped<BaseRepository<Serie>, SerieRepository>();
 builder.Services.AddScoped<BaseRepository<Episode>, EpisodeRepository>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
