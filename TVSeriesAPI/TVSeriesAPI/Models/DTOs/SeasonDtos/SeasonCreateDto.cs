@@ -2,7 +2,7 @@
 
 namespace TVSeriesAPI.Models.DTOs
 {
-    public class SeasonCreateDTO
+    public class SeasonCreateDto
     {
         [Required]
         [Range(1, int.MaxValue)]
