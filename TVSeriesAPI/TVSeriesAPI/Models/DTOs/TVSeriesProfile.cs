@@ -25,7 +25,7 @@ namespace TVSeriesAPI.Models.DTOs
             #endregion
 
             #region Season maps
-            CreateMap<SeasonCreateExternalDTO, Season>();
+            CreateMap<SeasonCreateDTO, Season>();
             CreateMap<Season, SeasonReadDto>();
             #endregion
 

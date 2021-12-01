@@ -2,20 +2,11 @@
 
 namespace TVSeriesAPI.Models.DTOs
 {
-    public class SeasonCreateDto
+    public class SeasonCreateDTO
     {
         [Required]
         [Range(1, int.MaxValue)]
         public int Number { get; set; }
 
-        [Required]
-        public int SerieId { get; set; }
-    }
-
-    public class SeasonCreateExternalDTO
-    {
-        [Required]
-        [Range(1, int.MaxValue)]
-        public int Number { get; set; }
     }
 }

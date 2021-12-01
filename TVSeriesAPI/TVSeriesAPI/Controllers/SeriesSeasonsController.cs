@@ -97,7 +97,7 @@ namespace TVSeriesAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         // POST: series/5/seasons
         [HttpPost("{seriesId}/seasons")]
-        public async Task<ActionResult<SeasonReadDto>> CreateSeriesSeasons(int seriesId, SeasonCreateExternalDTO season)
+        public async Task<ActionResult<SeasonReadDto>> CreateSeriesSeasons(int seriesId, SeasonCreateDTO season)
         {
             Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
             if (serie is null)
@@ -147,7 +147,7 @@ namespace TVSeriesAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         // PUT: series/5/seasons/5
         [HttpPut("{seriesId}/seasons/{seasonId}")]
-        public async Task<ActionResult> PutSeriesSeasons(int seriesId, int seasonId, SeasonCreateDto season)
+        public async Task<ActionResult> PutSeriesSeasons(int seriesId, int seasonId, SeasonCreateDTO season)
         {
             Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
             if (serie is null)
