@@ -8,7 +8,5 @@ namespace TVSeriesAPI.Models.DTOs
         [Range(1, int.MaxValue)]
         public int Number { get; set; }
 
-        [Required]
-        public int SerieId { get; set; }
     }
 }

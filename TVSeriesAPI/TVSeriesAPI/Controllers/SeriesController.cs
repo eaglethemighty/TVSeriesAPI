@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using TVSeriesAPI.Controllers.Errors;
 using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.DAL.Repositories;
+using TVSeriesAPI.DAL.Repositories.Interfaces;
 using TVSeriesAPI.Models.DTOs;
 using TVSeriesAPI.Models.Entities;
 
@@ -17,18 +18,18 @@ namespace TVSeriesAPI.Controllers
     {
         private readonly ILogger<SeriesController> _logger;
         private readonly IMapper _mapper;
-        private readonly BaseRepository<Serie> _serieRepository;
-        private readonly BaseRepository<Season> _seasonRepository;
-        private readonly BaseRepository<Episode> _episodeRepository;
-        private readonly BaseRepository<Genre> _genreRepository;
+        private readonly IRepositoryJoin<Serie> _serieRepository;
+        private readonly IRepositoryJoin<Season> _seasonRepository;
+        private readonly IRepositoryJoin<Episode> _episodeRepository;
+        private readonly IRepositoryJoin<Genre> _genreRepository;
 
         public SeriesController(
             ILogger<SeriesController> logger,
             IMapper mapper,
-            BaseRepository<Serie> serieRepository,
-            BaseRepository<Season> seasonRepository,
-            BaseRepository<Episode> episodeRepository,
-            BaseRepository<Genre> genreRepository)
+            IRepositoryJoin<Serie> serieRepository,
+            IRepositoryJoin<Season> seasonRepository,
+            IRepositoryJoin<Episode> episodeRepository,
+            IRepositoryJoin<Genre> genreRepository)
         {
             this._logger = logger;
             this._mapper = mapper;

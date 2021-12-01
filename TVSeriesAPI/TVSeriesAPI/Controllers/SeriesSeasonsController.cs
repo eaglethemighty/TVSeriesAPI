@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using TVSeriesAPI.DAL.Repositories;
+﻿using Microsoft.AspNetCore.Mvc;
+using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.Models.DTOs;
+using TVSeriesAPI.Models.Entities;
 
 namespace TVSeriesAPI.Controllers
 {
@@ -31,7 +26,16 @@ namespace TVSeriesAPI.Controllers
         [HttpGet("{seriesId}/seasons")]
         public async Task<ActionResult<IList<SeasonReadDto>>> GetSeriesSeasons(int seriesId)
         {
-            throw new NotImplementedException();
+            Serie Serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            if (Serie is null)
+            {
+                return NotFound();
+            }
+
+            List<Season> seasons = Serie.Seasons.OrderBy(season => season.Number).ToList();
+
+            List<SeasonReadDto> seasonsMapped = _mapper.Map<List<SeasonReadDto>>(seasons);
+            return Ok(seasonsMapped);
         }
 
         /// <summary>
@@ -51,10 +55,23 @@ namespace TVSeriesAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         // GET: series/5/seasons/5
-        [HttpGet("{seriesId}/seasons/{seasonId}")]
+        [HttpGet("{seriesId}/seasons/{seasonId}", Name = "GetSeriesSeasons")]
         public async Task<ActionResult<SeasonReadDto>> GetSeriesSeasons(int seriesId, int seasonId)
         {
-            throw new NotImplementedException();
+            Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+
+            Season season = serie.Seasons.FirstOrDefault(season => season.Id == seasonId);
+            if (season is null)
+            {
+                return NotFound();
+            }
+
+            SeasonReadDto seasonMapped = _mapper.Map<SeasonReadDto>(season);
+            return Ok(seasonMapped);
         }
 
         /// <summary>
@@ -80,9 +97,30 @@ namespace TVSeriesAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         // POST: series/5/seasons
         [HttpPost("{seriesId}/seasons")]
-        public async Task<ActionResult<SeasonReadDto>> GetSeriesSeasons(int seriesId, SeasonCreateDto season)
+        public async Task<ActionResult<SeasonReadDto>> CreateSeriesSeasons(int seriesId, SeasonCreateDto season)
         {
-            throw new NotImplementedException();
+            Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+            List<Season> seasons = serie.Seasons.OrderBy(season => season.Number).ToList();
+
+            if (seasons.Any(s => s.Number == season.Number))
+            {
+                return BadRequest("This series already has a season with given number");
+            }
+            
+            Season seasonToAdd = _mapper.Map<Season>(season);
+            seasonToAdd.SerieId = seriesId;
+            await _seasonRepository.AddAsync(seasonToAdd);
+            bool isDatabaseChanged = await _seasonRepository.SaveChanges();
+            if (!isDatabaseChanged)
+            {
+                return BadRequest();
+            }
+
+            return CreatedAtRoute(nameof(GetSeriesSeasons), new { seriesId = seriesId, seasonId = seasonToAdd.Id}, _mapper.Map<SeasonReadDto>(seasonToAdd));
         }
 
         /// <summary>
@@ -111,7 +149,27 @@ namespace TVSeriesAPI.Controllers
         [HttpPut("{seriesId}/seasons/{seasonId}")]
         public async Task<ActionResult> PutSeriesSeasons(int seriesId, int seasonId, SeasonCreateDto season)
         {
-            throw new NotImplementedException();
+            Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+            List<Season> seasons = serie.Seasons.OrderBy(season => season.Number).ToList();
+
+            if (seasons.Any(s => s.Number == season.Number))
+            {
+                return BadRequest("This series already has a season with given number");
+            }
+
+            Season seasonToAdd = _mapper.Map<Season>(season);
+            await _seasonRepository.UpdateAsync(seasonToAdd);
+            bool isDatabaseChanged = await _seasonRepository.SaveChanges();
+            if (!isDatabaseChanged)
+            {
+                return BadRequest("Error updating seasons.");
+            }
+
+            return NoContent();
         }
 
         /// <summary>
@@ -134,7 +192,27 @@ namespace TVSeriesAPI.Controllers
         [HttpDelete("{seriesId}/seasons/{seasonId}")]
         public async Task<ActionResult> DeleteSeriesSeasons(int seriesId, int seasonId)
         {
-            throw new NotImplementedException();
+            Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+
+            Season season = serie.Seasons.FirstOrDefault(season => season.Id == seasonId);
+
+            if (season is null)
+            {
+                return BadRequest("There is no series with given season ID.");
+            }
+
+            await _seasonRepository.DeleteAsync(season);
+            bool isDatabaseChanged = await _seasonRepository.SaveChanges();
+            if (!isDatabaseChanged)
+            {
+                return BadRequest("Error deleting season.");
+            }
+
+            return NoContent();
         }
     }
 }

@@ -7,20 +7,32 @@ namespace TVSeriesAPI.Models.DTOs
     {
         public TVSeriesProfile()
         {
+            #region CastMember maps
             CreateMap<CastMemberCreateDto, CastMember>();
             CreateMap<CastMember, CastMemberReadDto>();
+            #endregion
 
+            #region Episode maps
             CreateMap<EpisodeCreateDto, Episode>();
             CreateMap<Episode, EpisodeReadDto>();
+            #endregion
 
+            #region Genre maps
             CreateMap<GenreCreateDto, Genre>();
             CreateMap<Genre, GenreReadDto>();
+            CreateMap<Genre, GenreUpdateDto>();
+            CreateMap<GenreUpdateDto, Genre>();
+            #endregion
 
+            #region Season maps
             CreateMap<SeasonCreateDto, Season>();
             CreateMap<Season, SeasonReadDto>();
+            #endregion
 
+            #region Serie maps
             CreateMap<SerieCreateDto, Serie>();
             CreateMap<Serie, SerieReadDto>();
+            #endregion
         }
     }
 }
