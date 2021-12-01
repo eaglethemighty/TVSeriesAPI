@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using TVSeriesAPI.Authentication;
 using TVSeriesAPI.DAL;
 using TVSeriesAPI.DAL.Repositories;
+using TVSeriesAPI.DAL.Repositories.Interfaces;
 using TVSeriesAPI.Models.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +44,8 @@ builder.Services.AddSingleton<IJwtAuth>(new JwtAuth(builder.Configuration["Jwt:K
 
 #endregion
 
+builder.Services.AddSingleton<IJwtAuth>(new JwtAuth(builder.Configuration["Jwt:Key"]));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(config =>
 {
@@ -62,9 +65,9 @@ builder.Services.AddDbContext<TVSeriesDbContext>(options =>
 builder.Services.AddScoped<BaseRepository<CastMember>, CastMemberRepository>();
 builder.Services.AddScoped<BaseRepository<Episode>, EpisodeRepository>();
 builder.Services.AddScoped<BaseRepository<EpisodeCast>, EpisodeCastRepository>();
-builder.Services.AddScoped<BaseRepository<Genre>, GenreRepository>();
+builder.Services.AddScoped<IRepositoryJoin<Genre>, GenreRepository>();
 builder.Services.AddScoped<BaseRepository<Season>, SeasonRepository>();
-builder.Services.AddScoped<BaseRepository<Serie>, SerieRepository>();
+builder.Services.AddScoped<IRepositoryJoin<Serie>, SerieRepository>();
 builder.Services.AddScoped<BaseRepository<Episode>, EpisodeRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
