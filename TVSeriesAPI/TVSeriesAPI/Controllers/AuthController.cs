@@ -18,15 +18,6 @@ namespace TVSeriesAPI.Controllers
         {
             _jwtAuth = jwtAuth;
         }
-
-        // GET api/auth/test
-        [HttpGet("test")]
-        [Authorize]
-        public async Task<IActionResult> GetTest()
-        {
-            return Ok(new { id = 1, name = "test" });
-        }
-
         
         // POST api/auth/login
         /// <summary>
