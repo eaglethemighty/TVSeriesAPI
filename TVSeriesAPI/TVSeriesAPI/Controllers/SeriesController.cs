@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using TVSeriesAPI.Controllers.Errors;
 using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.DAL.Repositories;
 using TVSeriesAPI.Models.DTOs;
@@ -63,10 +59,7 @@ namespace TVSeriesAPI.Controllers
         {
             var seriesQuery = await _serieRepository.GetAllAsync();
             var series = seriesQuery.Join(x => x.Genre).ToList();
-            if (series is null || series.Count == 0)
-            {
-                return NotFound();
-            }
+            if (series is null || series.Count == 0) return NotFound();
 
             return Ok(_mapper.Map<ICollection<SerieReadDto>>(series));
         }
@@ -93,10 +86,7 @@ namespace TVSeriesAPI.Controllers
         {
             var seriesQuery = await _serieRepository.GetAllAsync();
             var serie = seriesQuery.Join(x => x.Genre).FirstOrDefault(x => x.Id == seriesId);
-            if (serie is null)
-            {
-                return NotFound();
-            }
+            if (serie is null) return NotFound();
 
             return Ok(_mapper.Map<SerieReadDto>(serie));
         }
@@ -127,7 +117,11 @@ namespace TVSeriesAPI.Controllers
         {
             var serieEntity = _mapper.Map<Serie>(serie);
             var genreQuery = await _genreRepository.GetAllAsync();
-            if (genreQuery.FirstOrDefault(x => x.Id == serie.GenreId) is null) return BadRequest();
+            if (genreQuery.FirstOrDefault(x => x.Id == serie.GenreId) is null)
+            {
+                Dictionary<string, string> errors = new() { { "genreId", "Genre does not exist in database." } };
+                return CustomBadRequest(errors);
+            }
             await _serieRepository.AddAsync(serieEntity);
             bool result = await _serieRepository.SaveChanges();
             if (result is false) return BadRequest();
@@ -162,7 +156,21 @@ namespace TVSeriesAPI.Controllers
         [HttpPut("{seriesId}")]
         public async Task<IActionResult> PutSeries(int seriesId, SerieCreateDto serie)
         {
-            throw new NotImplementedException();
+            var genreQuery = await _genreRepository.GetAllAsync();
+            if (genreQuery.FirstOrDefault(x => x.Id == serie.GenreId) is null)
+            {
+                Dictionary<string, string> errors = new() { { "genreId", "Genre does not exist in database." } };
+                return CustomBadRequest(errors);
+            }
+            var serieQuery = await _serieRepository.GetAllAsync();
+            var serieEntity = serieQuery.FirstOrDefault(x => x.Id == seriesId);
+            if (serieEntity is null) return NotFound();
+            var updatedSerieEntity = _mapper.Map(serie, serieEntity);
+            await _serieRepository.UpdateAsync(updatedSerieEntity);
+            bool result = await _serieRepository.SaveChanges();
+            if (result is false) return BadRequest();
+
+            return NoContent();
         }
 
         /// <summary>
@@ -184,7 +192,20 @@ namespace TVSeriesAPI.Controllers
         [HttpDelete("{seriesId}")]
         public async Task<IActionResult> DeleteSeries(int seriesId)
         {
-            throw new NotImplementedException();
+            var seriesQuery = await _serieRepository.GetAllAsync();
+            var serie = seriesQuery.FirstOrDefault(x => x.Id == seriesId);
+            if (serie is null) return NotFound();
+            await _serieRepository.DeleteAsync(serie);
+            bool result = await _serieRepository.SaveChanges();
+            if (result is false) return BadRequest();
+
+            return NoContent();
+        }
+
+        private BadRequestObjectResult CustomBadRequest(Dictionary<string, string> errors)
+        {
+            var traceId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+            return BadRequest(new BadRequestError(traceId!, errors));
         }
     }
 }
