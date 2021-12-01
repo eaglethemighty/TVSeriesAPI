@@ -17,6 +17,10 @@ namespace TVSeriesAPI.DAL
         {
         }
 
+        public TVSeriesDbContext()
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.SeedData();
