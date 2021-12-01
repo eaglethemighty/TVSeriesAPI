@@ -155,7 +155,7 @@ namespace TVSeriesAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         // PUT: series
         [HttpPut("{seriesId}")]
-        public async Task<IActionResult> PutSeries(int seriesId, SerieCreateDto serie)
+        public async Task<IActionResult> PutSeries(int seriesId, SerieUpdateDto serie)
         {
             var genreQuery = await _genreRepository.GetAllAsync();
             if (genreQuery.FirstOrDefault(x => x.Id == serie.GenreId) is null)
