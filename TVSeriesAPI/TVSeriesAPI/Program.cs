@@ -62,13 +62,12 @@ builder.Services.AddSwaggerGen(config =>
 builder.Services.AddDbContext<TVSeriesDbContext>(options =>
     options.UseSqlServer(builder.Configuration["ConnectionStrings:TVSeriesDbConnection"]));
 
-builder.Services.AddScoped<BaseRepository<CastMember>, CastMemberRepository>();
-builder.Services.AddScoped<BaseRepository<Episode>, EpisodeRepository>();
-builder.Services.AddScoped<BaseRepository<EpisodeCast>, EpisodeCastRepository>();
+builder.Services.AddScoped<IRepositoryJoin<CastMember>, CastMemberRepository>();
+builder.Services.AddScoped<IRepositoryJoin<EpisodeCast>, EpisodeCastRepository>();
 builder.Services.AddScoped<IRepositoryJoin<Genre>, GenreRepository>();
-builder.Services.AddScoped<BaseRepository<Season>, SeasonRepository>();
 builder.Services.AddScoped<IRepositoryJoin<Serie>, SerieRepository>();
-builder.Services.AddScoped<BaseRepository<Episode>, EpisodeRepository>();
+builder.Services.AddScoped<IRepositoryJoin<Season>, SeasonRepository>();
+builder.Services.AddScoped<IRepositoryJoin<Episode>, EpisodeRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
