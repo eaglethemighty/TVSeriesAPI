@@ -60,7 +60,7 @@ builder.Services.AddSwaggerGen(config =>
     config.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 builder.Services.AddDbContext<TVSeriesDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TVSeriesDbConnection")));
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:TVSeriesDbConnection"]));
 
 builder.Services.AddScoped<BaseRepository<CastMember>, CastMemberRepository>();
 builder.Services.AddScoped<BaseRepository<Episode>, EpisodeRepository>();
