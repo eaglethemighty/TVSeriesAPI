@@ -40,10 +40,5 @@ namespace TVSeriesAPI.DAL.Repositories
         {
             return Task.Run(() => dataContext.Set<TEntity>().Update(obj));
         }
-
-        public Task<TEntity> GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
