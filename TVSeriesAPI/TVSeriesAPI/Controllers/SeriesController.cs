@@ -59,9 +59,8 @@ namespace TVSeriesAPI.Controllers
             {
                 return NotFound();
             }
-            _mapper.Map<SerieReadDto>(series);
 
-            return Ok(series);
+            return Ok(_mapper.Map<ICollection<SerieReadDto>>(series));
         }
 
         /// <summary>
@@ -83,7 +82,13 @@ namespace TVSeriesAPI.Controllers
         [HttpGet("{seriesId}")]
         public async Task<ActionResult<SerieReadDto>> GetSeries(int seriesId)
         {
-            throw new NotImplementedException();
+            var serie = await _serieRepository.GetById(seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<SerieReadDto>(serie));
         }
 
         /// <summary>
