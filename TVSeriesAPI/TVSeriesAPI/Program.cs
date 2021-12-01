@@ -39,6 +39,8 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+builder.Services.AddSingleton<IJwtAuth>(new JwtAuth(builder.Configuration["Jwt:Key"]));
+
 #endregion
 
 builder.Services.AddEndpointsApiExplorer();
