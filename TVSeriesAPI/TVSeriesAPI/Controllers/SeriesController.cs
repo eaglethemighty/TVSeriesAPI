@@ -42,7 +42,7 @@ namespace TVSeriesAPI.Controllers
             this._genreRepository = genreRepository;
         }
 
-        /// <summary>
+/*        /// <summary>
         /// Gets all series
         /// </summary>
         /// <returns>Status code, and all series on success</returns>
@@ -69,7 +69,7 @@ namespace TVSeriesAPI.Controllers
             }
 
             return Ok(_mapper.Map<ICollection<SerieReadDto>>(series));
-        }
+        }*/
 
         /// <summary>
         /// Gets a series by ID
