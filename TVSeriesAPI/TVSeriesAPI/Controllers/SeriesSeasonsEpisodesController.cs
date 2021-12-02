@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using TVSeriesAPI.DAL.Repositories;
+﻿using Microsoft.AspNetCore.Mvc;
+using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.Models.DTOs;
+using TVSeriesAPI.Models.Entities;
 
 namespace TVSeriesAPI.Controllers
 {
@@ -32,7 +27,27 @@ namespace TVSeriesAPI.Controllers
         [HttpGet("{seriesId}/seasons/{seasonId}/episodes")]
         public async Task<ActionResult<IList<EpisodeReadDto>>> GetSeriesSeasonsEpisodes(int seriesId, int seasonId)
         {
-            throw new NotImplementedException();
+            Serie? serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefault(serie => serie.Id == seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+
+            List<Season>? seasons = serie.Seasons.ToList();
+            if (seasons is null)
+            {
+                return NotFound();
+            }
+
+            List<Episode> allEpisodes = new();
+
+            foreach (var season in seasons)
+            {
+                allEpisodes.AddRange(season.Episodes);
+            }
+
+            List<EpisodeReadDto> episodesMapped = _mapper.Map<List<EpisodeReadDto>>(allEpisodes);
+            return Ok(episodesMapped);
         }
 
         /// <summary>
