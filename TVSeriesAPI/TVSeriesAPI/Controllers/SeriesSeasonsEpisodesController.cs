@@ -29,24 +29,19 @@ namespace TVSeriesAPI.Controllers
         [HttpGet("{seriesId}/seasons/{seasonId}/episodes")]
         public async Task<ActionResult<IList<EpisodeReadDto>>> GetSeriesSeasonsEpisodes(int seriesId, int seasonId)
         {
-            Serie? serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefault(serie => serie.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
             }
 
-            List<Season>? seasons = serie.Seasons.ToList();
-            if (seasons is null)
+            var season = serie.Seasons.ToList().FirstOrDefault(season => season.Id == seasonId);
+            if (season is null)
             {
                 return NotFound();
             }
 
-            List<Episode> allEpisodes = new();
-
-            foreach (var season in seasons)
-            {
-                allEpisodes.AddRange(season.Episodes);
-            }
+            List<Episode> allEpisodes = season.Episodes.ToList();
 
             List<EpisodeReadDto> episodesMapped = _mapper.Map<List<EpisodeReadDto>>(allEpisodes);
             return Ok(episodesMapped);
@@ -71,10 +66,29 @@ namespace TVSeriesAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [AllowAnonymous]
         // GET: series/5/seasons/5/episodes/5
-        [HttpGet("{seriesId}/seasons/{seasonId}/episodes/{episodeId}")]
+        [HttpGet("{seriesId}/seasons/{seasonId}/episodes/{episodeId}", Name = "GetSeriesSeasonsEpisodes")]
         public async Task<ActionResult<EpisodeReadDto>> GetSeriesSeasonsEpisodes(int seriesId, int seasonId, int episodeId)
         {
-            throw new NotImplementedException();
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+
+            var season = serie.Seasons.ToList().FirstOrDefault(season => season.Id == seasonId);
+            if (season is null)
+            {
+                return NotFound();
+            }
+
+            var episode = season.Episodes.ToList().FirstOrDefault(ep => ep.Id == episodeId);
+            if (episode is null)
+            {
+                return NotFound();
+            }
+
+            EpisodeReadDto episodesMapped = _mapper.Map<EpisodeReadDto>(episode);
+            return Ok(episodesMapped);
         }
 
         /// <summary>
@@ -105,7 +119,28 @@ namespace TVSeriesAPI.Controllers
         [HttpPost("{seriesId}/seasons/{seasonId}/episodes")]
         public async Task<ActionResult<EpisodeReadDto>> PostSeriesSeasonsEpisodes(int seriesId, int seasonId, EpisodeCreateDto episode)
         {
-            throw new NotImplementedException();
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+
+            var season = serie.Seasons.ToList().FirstOrDefault(season => season.Id == seasonId);
+            if (season is null)
+            {
+                return NotFound();
+            }
+
+
+            if (season.Episodes.ToList().Any(ep => ep.Number == episode.Number))
+            {
+                return BadRequest();
+            }
+
+            Episode episodeToAdd = _mapper.Map<Episode>(episode);
+
+
+            return CreatedAtRoute(nameof(GetSeriesSeasonsEpisodes), new { seasonId = episodeToAdd.SeasonId }, _mapper.Map<EpisodeReadDto>(episodeToAdd));
         }
 
         /// <summary>
@@ -137,7 +172,28 @@ namespace TVSeriesAPI.Controllers
         [HttpPut("{seriesId}/seasons/{seasonId}/episodes/{episodeId}")]
         public async Task<ActionResult> PutSeriesSeasonsEpisodes(int seriesId, int seasonId, int episodeId, EpisodeCreateDto episode)
         {
-            throw new NotImplementedException();
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+
+            var season = serie.Seasons.ToList().FirstOrDefault(season => season.Id == seasonId);
+            if (season is null)
+            {
+                return NotFound();
+            }
+
+
+            var episodeToUpdate = season.Episodes.ToList().FirstOrDefault(ep => ep.Id == episodeId);
+            if (episodeToUpdate is null)
+            {
+                return NotFound();
+            }
+
+            Episode episodeToUpdateInDatabase = _mapper.Map(episode, episodeToUpdate);
+
+            return CreatedAtRoute(nameof(GetSeriesSeasonsEpisodes), new { seasonId = episodeToUpdateInDatabase.SeasonId }, _mapper.Map<EpisodeReadDto>(episodeToUpdateInDatabase));
         }
 
         /// <summary>
@@ -162,7 +218,32 @@ namespace TVSeriesAPI.Controllers
         [HttpDelete("{seriesId}/seasons/{seasonId}/episodes/{episodeId}")]
         public async Task<ActionResult> DeleteSeriesSeasonsEpisodes(int seriesId, int seasonId, int episodeId)
         {
-            throw new NotImplementedException();
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
+            if (serie is null)
+            {
+                return NotFound();
+            }
+
+            var season = serie.Seasons.ToList().FirstOrDefault(season => season.Id == seasonId);
+            if (season is null)
+            {
+                return NotFound();
+            }
+
+            var episode = season.Episodes.ToList().FirstOrDefault(ep => ep.Id == episodeId);
+            if (episode is null)
+            {
+                return NotFound();
+            }
+
+            await _episodeRepository.DeleteAsync(episode);
+            bool isDatabaseChanged = await _episodeRepository.SaveChanges();
+            if (!isDatabaseChanged)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
         }
     }
 }
