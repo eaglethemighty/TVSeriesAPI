@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using TVSeriesAPI.Authentication;
+using TVSeriesAPI.Controllers.ErrorHandler;
 using TVSeriesAPI.DAL;
 using TVSeriesAPI.DAL.Repositories;
 using TVSeriesAPI.DAL.Repositories.Interfaces;
@@ -62,15 +63,19 @@ builder.Services.AddSwaggerGen(config =>
 builder.Services.AddDbContext<TVSeriesDbContext>(options =>
     options.UseSqlServer(builder.Configuration["ConnectionStrings:TVSeriesDbConnection"]));
 
-builder.Services.AddScoped<BaseRepository<CastMember>, CastMemberRepository>();
-builder.Services.AddScoped<BaseRepository<Episode>, EpisodeRepository>();
-builder.Services.AddScoped<BaseRepository<EpisodeCast>, EpisodeCastRepository>();
+builder.Services.AddScoped<IRepositoryJoin<CastMember>, CastMemberRepository>();
+builder.Services.AddScoped<IRepositoryJoin<EpisodeCast>, EpisodeCastRepository>();
 builder.Services.AddScoped<IRepositoryJoin<Genre>, GenreRepository>();
-builder.Services.AddScoped<BaseRepository<Season>, SeasonRepository>();
 builder.Services.AddScoped<IRepositoryJoin<Serie>, SerieRepository>();
-builder.Services.AddScoped<BaseRepository<Episode>, EpisodeRepository>();
+builder.Services.AddScoped<IRepositoryJoin<Season>, SeasonRepository>();
+builder.Services.AddScoped<IRepositoryJoin<Episode>, EpisodeRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddMvc(options =>
+    {
+        options.Filters.Add(new ErrorHandlingFilter());
+    });
 
 var app = builder.Build();
 
