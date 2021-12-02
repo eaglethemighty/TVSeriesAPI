@@ -1,6 +1,5 @@
 ﻿namespace TVSeriesAPI.Models.DTOs
 {
-    public class CastMemberUpdateDto
-    {
+    public class CastMemberUpdateDto : CastMemberCreateDto    {
     }
 }
