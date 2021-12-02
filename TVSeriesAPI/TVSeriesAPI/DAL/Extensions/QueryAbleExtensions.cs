@@ -32,5 +32,15 @@ namespace TVSeriesAPI.DAL.Extensions
             var include = queryable.ThenInclude(propToExpand);
             return new IncludableJoin<TEntity, TProperty>(include);
         }
+
+        public static async Task<IList<TEntity>> ToListAsyncCustom<TEntity>(this IQueryable<TEntity> query)
+        {
+            return await query.ToListAsync().ConfigureAwait(false);
+        }
+
+        public static async Task<TEntity> FirstOrDefaultAsync<TEntity>(this IQueryable<TEntity> query, Expression<Func<TEntity, bool>> predicate)
+        {
+            return await query.FirstOrDefaultAsync(predicate);
+        }
     }
 }
