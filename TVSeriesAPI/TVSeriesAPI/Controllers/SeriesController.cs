@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVSeriesAPI.Controllers.Errors;
 using TVSeriesAPI.DAL.Extensions;
-using TVSeriesAPI.DAL.Repositories;
 using TVSeriesAPI.DAL.Repositories.Interfaces;
 using TVSeriesAPI.Models.DTOs;
 using TVSeriesAPI.Models.Entities;
@@ -16,6 +15,8 @@ namespace TVSeriesAPI.Controllers
     [ApiController]
     public partial class SeriesController : Controller
     {
+        const int _seriesPerPage = 3;
+
         private readonly ILogger<SeriesController> _logger;
         private readonly IMapper _mapper;
         private readonly IRepositoryJoin<Serie> _serieRepository;
@@ -37,6 +38,44 @@ namespace TVSeriesAPI.Controllers
             this._seasonRepository = seasonRepository;
             this._episodeRepository = episodeRepository;
             this._genreRepository = genreRepository;
+        }
+
+        /// <summary>
+        /// Gets all series matching query string search conditions
+        /// </summary>
+        /// <param name="query">Query string to filter series</param>
+        /// <returns>Status code, and series on success</returns>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     GET /series/search/query?page=5&amp;filter=Title&amp;sort=false
+        ///     
+        /// </remarks>
+        /// <response code="200">If series is returned</response>
+        /// <response code="404">If no series matching search conditions were found</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        // GET: series/search/query?page=5&filter=Title&sort=false
+        [AllowAnonymous]
+        [HttpGet("search/{query}")]
+        public async Task<ActionResult<ICollection<SerieReadDto>>> GetSeries([FromQuery] SerieQuery query)
+        {
+            var seriesQuery = await _serieRepository.GetAllAsync();
+            var series = seriesQuery.Join(x => x.Genre).ToList();
+
+            var paginatedSeries = series.Skip((query.Page - 1) * _seriesPerPage).Take(_seriesPerPage).ToList();
+
+            var filteredSeries = (query.Filter == "*")
+                ? paginatedSeries
+                : paginatedSeries.Where(s => s.Title.Contains(query.Filter)).ToList();
+
+            var sortedSeries = (query.Sort)
+                ? filteredSeries.OrderBy(s => s.Title).ToList()
+                : filteredSeries;
+
+            if (sortedSeries is null || sortedSeries.Count == 0) return NotFound();
+
+            return Ok(_mapper.Map<ICollection<SerieReadDto>>(sortedSeries));
         }
 
         /// <summary>
@@ -110,8 +149,10 @@ namespace TVSeriesAPI.Controllers
         /// </remarks>
         /// <response code="201">If series was created successfully</response>
         /// <response code="400">If series object wasn't valid</response>
+        /// <response code="401">If valid bearer token wasn't provided</response>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         // POST: series
         [HttpPost]
         public async Task<ActionResult<SerieReadDto>> PostSeries(SerieCreateDto serie)
@@ -149,9 +190,11 @@ namespace TVSeriesAPI.Controllers
         /// </remarks>
         /// <response code="204">If series was updated successfully</response>
         /// <response code="400">If series object wasn't valid</response>
+        /// <response code="401">If valid bearer token wasn't provided</response>
         /// <response code="404">If series was not found</response>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         // PUT: series
         [HttpPut("{seriesId}")]
@@ -186,8 +229,10 @@ namespace TVSeriesAPI.Controllers
         ///     
         /// </remarks>
         /// <response code="204">If series was deleted successfully</response>
+        /// <response code="401">If valid bearer token wasn't provided</response>
         /// <response code="404">If series was not found</response>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         // DELETE: series/5
         [HttpDelete("{seriesId}")]
