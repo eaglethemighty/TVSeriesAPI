@@ -9,6 +9,7 @@ namespace TVSeriesAPI.Controllers
 {
     [Route("genres")]
     [ApiController]
+    [Authorize]
     public class GenreController : ControllerBase
     {
         private readonly ILogger<GenreController> _logger;
@@ -42,6 +43,7 @@ namespace TVSeriesAPI.Controllers
         /// <response code="404">If no genres exist</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<ICollection<GenreReadDto>>> GetGenres()
         {
@@ -68,6 +70,7 @@ namespace TVSeriesAPI.Controllers
         /// <response code="404">If genre not found</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         [HttpGet("{id}", Name = "GetGenre")]
         public async Task<ActionResult<GenreReadDto>> GetGenre(int id)
         {
@@ -94,6 +97,7 @@ namespace TVSeriesAPI.Controllers
         /// <response code="404">If genre not found</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         [HttpGet("{id}/series")]
         public async Task<ActionResult<ICollection<SerieReadDto>>> GetSeriesOfGenre(int id)
         {
@@ -128,7 +132,6 @@ namespace TVSeriesAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [Authorize]
         [HttpPost]
         public async Task<ActionResult<GenreReadDto>> CreateGenre(GenreCreateDto genreCreateDto)
         {
@@ -157,9 +160,10 @@ namespace TVSeriesAPI.Controllers
         /// </remarks>
         /// <response code="204">If genre is updated</response>
         /// <response code="404">If genre not found</response>
+        /// <response code="401">If client is unauthorized</response>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateGenre(int id, GenreUpdateDto genreUpdateDto)
         {
@@ -181,18 +185,15 @@ namespace TVSeriesAPI.Controllers
         /// <remarks>
         /// Sample request:
         ///     DELETE /genres/1
-        /// Sample body: 
-        /// {
-        ///     "Name": "new name"
-        /// }
         /// </remarks>
         /// <response code="204">If genre is deleted</response>
         /// <response code="400">If failed to delete genre</response>
+        /// <response code="401">If client is unauthorized</response>
         /// <response code="404">If genre not found</response>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Authorize]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteGenre(int id)
         {
