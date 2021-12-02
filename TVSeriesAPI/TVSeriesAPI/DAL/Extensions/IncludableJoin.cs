@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace TVSeriesAPI.DAL.Extensions
 {
-    public interface IIncludableJoin<out TEntity, out TProperty> : IQueryable<TEntity>
+    public interface IIncludableJoin<out TEntity, out TProperty> : IQueryable<TEntity>, IAsyncEnumerable<TEntity>
     {
     }
     public class IncludableJoin<TEntity, TPreviousProperty> : IIncludableJoin<TEntity, TPreviousProperty>
@@ -33,6 +33,11 @@ namespace TVSeriesAPI.DAL.Extensions
         internal IIncludableQueryable<TEntity, TPreviousProperty> GetQuery()
         {
             return _query;
+        }
+
+        public IAsyncEnumerator<TEntity> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        {
+            return _query.ToAsyncEnumerable().GetAsyncEnumerator();
         }
     }
 }
