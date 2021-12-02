@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.DAL.Repositories.Interfaces;
 
@@ -16,7 +17,6 @@ namespace TVSeriesAPI.DAL.Repositories
         {
             return ((IQueryable<TEntity>)dataContext.Set<TEntity>()).Join(navigationProperty);
         }
-
         public Task<IQueryable<TEntity>> GetAllAsync()
         {
             return Task.Run(() => (IQueryable<TEntity>)dataContext.Set<TEntity>());
@@ -39,6 +39,11 @@ namespace TVSeriesAPI.DAL.Repositories
         public Task UpdateAsync(TEntity obj)
         {
             return Task.Run(() => dataContext.Set<TEntity>().Update(obj));
+        }
+
+        public async Task<IList<TEntity>> ToListAsync(IQueryable<TEntity> query)
+        {
+            return await query.ToListAsync().ConfigureAwait(false);
         }
     }
 }
