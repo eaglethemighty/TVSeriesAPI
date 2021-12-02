@@ -9,10 +9,9 @@ namespace TVSeriesAPI.Controllers.ErrorHandler
         {
             var exception = context.Exception;
             ILogger logger = LoggerFactory.Create(x => x.AddConsole()).CreateLogger("ErrorHandlingFilter");
-            logger.LogError(
+            logger.LogCritical("\n" +
                 $"Exception message: {exception.Message} \n" +
-                $"Source: {exception.Source}\n" +
-                $"Target: {exception.TargetSite}");
+                $"Stack trace:\n {exception.StackTrace}");
 
             context.HttpContext.Response.StatusCode = 500;
             context.ExceptionHandled = true; //optional 

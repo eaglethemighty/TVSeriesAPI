@@ -47,6 +47,7 @@ namespace TVSeriesAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<ICollection<GenreReadDto>>> GetGenres()
         {
+            throw new NotImplementedException();
             var genres = await _genreRepository.GetAllAsync();
             var genresList = genres.ToList();
             if (genres is null || genresList.Count == 0)
