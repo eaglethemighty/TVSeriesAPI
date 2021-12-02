@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.DAL.Repositories;
 using TVSeriesAPI.Models.DTOs;
 using TVSeriesAPI.Models.Entities;
+using TVSeriesAPI.IIncludableEntensions;
 
 namespace TVSeriesAPI.Controllers
 {
@@ -61,8 +56,8 @@ namespace TVSeriesAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<ICollection<SerieReadDto>>> GetSeries()
         {
-            var seriesQuery = await _serieRepository.GetAllAsync();
-            var series = seriesQuery.Join(x => x.Genre).ToList();
+            var seriesQuery = _serieRepository.GetAllAsync();
+            var series = await (await seriesQuery).Join(x => x.Genre).ToListAsyncCustom();
             if (series is null || series.Count == 0)
             {
                 return NotFound();
@@ -92,7 +87,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult<SerieReadDto>> GetSeries(int seriesId)
         {
             var seriesQuery = await _serieRepository.GetAllAsync();
-            var serie = seriesQuery.Join(x => x.Genre).FirstOrDefault(x => x.Id == seriesId);
+            var serie = seriesQuery.Join(x => x.Genre).FirstOrDefaultAsync(x => x.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
@@ -127,7 +122,7 @@ namespace TVSeriesAPI.Controllers
         {
             var serieEntity = _mapper.Map<Serie>(serie);
             var genreQuery = await _genreRepository.GetAllAsync();
-            if (genreQuery.FirstOrDefault(x => x.Id == serie.GenreId) is null) return BadRequest();
+            if (await genreQuery.FirstOrDefaultAsync(x => x.Id == serie.GenreId) is null) return BadRequest();
             await _serieRepository.AddAsync(serieEntity);
             bool result = await _serieRepository.SaveChanges();
             if (result is false) return BadRequest();
