@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.Models.DTOs;
 using TVSeriesAPI.Models.Entities;
@@ -23,6 +24,7 @@ namespace TVSeriesAPI.Controllers
         /// <response code="404">If series or seasons with given ID was not found, or no episodes of that season exist</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         // GET: series/5/seasons/5/episodes
         [HttpGet("{seriesId}/seasons/{seasonId}/episodes")]
         public async Task<ActionResult<IList<EpisodeReadDto>>> GetSeriesSeasonsEpisodes(int seriesId, int seasonId)
@@ -67,6 +69,7 @@ namespace TVSeriesAPI.Controllers
         /// <response code="404">If series, season, or episode with given ID was not found</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         // GET: series/5/seasons/5/episodes/5
         [HttpGet("{seriesId}/seasons/{seasonId}/episodes/{episodeId}")]
         public async Task<ActionResult<EpisodeReadDto>> GetSeriesSeasonsEpisodes(int seriesId, int seasonId, int episodeId)
@@ -94,6 +97,7 @@ namespace TVSeriesAPI.Controllers
         /// <response code="201">If episode was created successfully</response>
         /// <response code="400">If episode object wasn't valid</response>
         /// <response code="404">If series or season with given ID was not found</response>
+        /// <response code="401">If client is unauthorized</response>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -125,6 +129,7 @@ namespace TVSeriesAPI.Controllers
         /// <response code="204">If episode was updated successfully</response>
         /// <response code="400">If episode object wasn't valid</response>
         /// <response code="404">If series, season, or episode with given ID was not found</response>
+        /// <response code="401">If client is unauthorized</response>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -150,6 +155,7 @@ namespace TVSeriesAPI.Controllers
         /// </remarks>
         /// <response code="204">If episode was deleted successfully</response>
         /// <response code="404">If series, season, or episode with given ID was not found</response>
+        /// <response code="401">If client is unauthorized</response>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         // DELETE: series/5/seasons/5/episodes/5
