@@ -26,7 +26,7 @@ namespace TVSeriesAPI.Controllers
         [HttpGet("{seriesId}/seasons")]
         public async Task<ActionResult<IList<SeasonReadDto>>> GetSeriesSeasons(int seriesId)
         {
-            Serie Serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            var Serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefaultAsync(s => s.Id == seriesId);
             if (Serie is null)
             {
                 return NotFound();
@@ -58,13 +58,13 @@ namespace TVSeriesAPI.Controllers
         [HttpGet("{seriesId}/seasons/{seasonId}", Name = "GetSeriesSeasons")]
         public async Task<ActionResult<SeasonReadDto>> GetSeriesSeasons(int seriesId, int seasonId)
         {
-            Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefaultAsync(s => s.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
             }
 
-            Season season = serie.Seasons.FirstOrDefault(season => season.Id == seasonId);
+            var season = serie.Seasons.FirstOrDefault(season => season.Id == seasonId);
             if (season is null)
             {
                 return NotFound();
@@ -99,7 +99,7 @@ namespace TVSeriesAPI.Controllers
         [HttpPost("{seriesId}/seasons")]
         public async Task<ActionResult<SeasonReadDto>> CreateSeriesSeasons(int seriesId, SeasonCreateDto season)
         {
-            Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefaultAsync(s => s.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
@@ -149,7 +149,7 @@ namespace TVSeriesAPI.Controllers
         [HttpPut("{seriesId}/seasons/{seasonId}")]
         public async Task<ActionResult> PutSeriesSeasons(int seriesId, int seasonId, SeasonCreateDto season)
         {
-            Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefaultAsync(s => s.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
@@ -192,7 +192,7 @@ namespace TVSeriesAPI.Controllers
         [HttpDelete("{seriesId}/seasons/{seasonId}")]
         public async Task<ActionResult> DeleteSeriesSeasons(int seriesId, int seasonId)
         {
-            Serie serie = (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefault(s => s.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).FirstOrDefaultAsync(s => s.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
