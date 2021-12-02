@@ -10,6 +10,8 @@ namespace TVSeriesAPI.Models.DTOs
             #region CastMember maps
             CreateMap<CastMemberCreateDto, CastMember>();
             CreateMap<CastMember, CastMemberReadDto>();
+            CreateMap<CastMember, CastMemberUpdateDto>();
+            CreateMap<CastMemberUpdateDto, CastMember>();
             #endregion
 
             #region Episode maps
