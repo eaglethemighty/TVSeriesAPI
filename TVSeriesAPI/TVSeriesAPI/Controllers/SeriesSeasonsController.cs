@@ -111,7 +111,8 @@ namespace TVSeriesAPI.Controllers
 
             if (seasons.Any(s => s.Number == season.Number))
             {
-                return BadRequest("This series already has a season with given number");
+                Dictionary<string, string> errors = new() { { "Number", "Duplicate season number for given series." } };
+                return CustomBadRequest(errors);
             }
             
             Season seasonToAdd = _mapper.Map<Season>(season);
@@ -120,7 +121,8 @@ namespace TVSeriesAPI.Controllers
             bool isDatabaseChanged = await _seasonRepository.SaveChanges();
             if (!isDatabaseChanged)
             {
-                return BadRequest();
+                Dictionary<string, string> errors = new() { { "Database Error", "Database update failed." } };
+                return CustomBadRequest(errors);
             }
 
             return CreatedAtRoute(nameof(GetSeriesSeasons), new { seriesId = seriesId, seasonId = seasonToAdd.Id}, _mapper.Map<SeasonReadDto>(seasonToAdd));
@@ -161,7 +163,8 @@ namespace TVSeriesAPI.Controllers
 
             if (seasons.Any(s => s.Number == season.Number))
             {
-                return BadRequest("This series already has a season with given number");
+                Dictionary<string, string> errors = new() { { "Number", "Duplicate season number for given series." } };
+                return CustomBadRequest(errors);
             }
 
             Season seasonToAdd = _mapper.Map<Season>(season);
@@ -169,7 +172,8 @@ namespace TVSeriesAPI.Controllers
             bool isDatabaseChanged = await _seasonRepository.SaveChanges();
             if (!isDatabaseChanged)
             {
-                return BadRequest("Error updating seasons.");
+                Dictionary<string, string> errors = new() { { "Database error", "Error updating season in the database." } };
+                return CustomBadRequest(errors);
             }
 
             return NoContent();
@@ -205,14 +209,15 @@ namespace TVSeriesAPI.Controllers
 
             if (season is null)
             {
-                return BadRequest("There is no series with given season ID.");
+                return NotFound();
             }
 
             await _seasonRepository.DeleteAsync(season);
             bool isDatabaseChanged = await _seasonRepository.SaveChanges();
             if (!isDatabaseChanged)
             {
-                return BadRequest("Error deleting season.");
+                Dictionary<string, string> errors = new() { { "Database Error", "Database update failed." } };
+                return CustomBadRequest(errors);
             }
 
             return NoContent();

@@ -134,7 +134,8 @@ namespace TVSeriesAPI.Controllers
 
             if (season.Episodes.ToList().Any(ep => ep.Number == episode.Number))
             {
-                return BadRequest();
+                Dictionary<string, string> errors = new() { { "Number", "Duplicate episode number for the sesason." } };
+                return CustomBadRequest(errors);
             }
 
             Episode episodeToAdd = _mapper.Map<Episode>(episode);
@@ -240,7 +241,8 @@ namespace TVSeriesAPI.Controllers
             bool isDatabaseChanged = await _episodeRepository.SaveChanges();
             if (!isDatabaseChanged)
             {
-                return BadRequest();
+                Dictionary<string, string> errors = new() { { "Database Error", "Episode update failed." } };
+                return CustomBadRequest(errors);
             }
 
             return NoContent();
