@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TVSeriesAPI.Models.DTOs.CastMemberDtos;
 using TVSeriesAPI.Models.Enums;
 
 namespace TVSeriesAPI.Models.DTOs
@@ -10,6 +11,7 @@ namespace TVSeriesAPI.Models.DTOs
         public string Name { get; set; } = null!;
 
         [Required]
+        [ExistInEnum]
         public CastPosition Position { get; set; }
     }
 }
