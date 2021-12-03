@@ -16,7 +16,8 @@ namespace TVSeriesAPI.Models.DTOs
 
             #region Episode maps
             CreateMap<EpisodeCreateDto, Episode>();
-            CreateMap<Episode, EpisodeReadDto>();
+            CreateMap<Episode, EpisodeReadDto>()
+                .ForMember(epDto => epDto.CastMembers, opt => opt.MapFrom(ep => ep.CastMembers.Select(cm => cm.CastMember).ToList()));
             #endregion
 
             #region Genre maps

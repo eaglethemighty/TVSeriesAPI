@@ -29,7 +29,12 @@ namespace TVSeriesAPI.Controllers
         [HttpGet("{seriesId}/seasons/{seasonId}/episodes")]
         public async Task<ActionResult<IList<EpisodeReadDto>>> GetSeriesSeasonsEpisodes(int seriesId, int seasonId)
         {
-            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons)
+                .ThenJoin(seasons => seasons.Episodes)
+                .ThenJoin(episodes => episodes.CastMembers)
+                .ThenJoin(episodes => episodes.CastMember)
+                .FirstOrDefaultAsync(serie => serie.Id == seriesId);
+
             if (serie is null)
             {
                 return NotFound();
@@ -69,7 +74,11 @@ namespace TVSeriesAPI.Controllers
         [HttpGet("{seriesId}/seasons/{seasonId}/episodes/{episodeId}", Name = "GetSeriesSeasonsEpisodes")]
         public async Task<ActionResult<EpisodeReadDto>> GetSeriesSeasonsEpisodes(int seriesId, int seasonId, int episodeId)
         {
-            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons)
+                .ThenJoin(seasons => seasons.Episodes)
+                .ThenJoin(episodes => episodes.CastMembers)
+                .ThenJoin(episodes => episodes.CastMember)
+                .FirstOrDefaultAsync(serie => serie.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
@@ -119,7 +128,11 @@ namespace TVSeriesAPI.Controllers
         [HttpPost("{seriesId}/seasons/{seasonId}/episodes")]
         public async Task<ActionResult<EpisodeReadDto>> PostSeriesSeasonsEpisodes(int seriesId, int seasonId, EpisodeCreateDto episode)
         {
-            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons)
+                .ThenJoin(seasons => seasons.Episodes)
+                .ThenJoin(episodes => episodes.CastMembers)
+                .ThenJoin(episodes => episodes.CastMember)
+                .FirstOrDefaultAsync(serie => serie.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
@@ -173,7 +186,12 @@ namespace TVSeriesAPI.Controllers
         [HttpPut("{seriesId}/seasons/{seasonId}/episodes/{episodeId}")]
         public async Task<ActionResult> PutSeriesSeasonsEpisodes(int seriesId, int seasonId, int episodeId, EpisodeCreateDto episode)
         {
-            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync())
+                .Join(s => s.Seasons)
+                .ThenJoin(seasons => seasons.Episodes)
+                .ThenJoin(episodes => episodes.CastMembers)
+                .ThenJoin(episodes => episodes.CastMember)
+                .FirstOrDefaultAsync(serie => serie.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
@@ -219,7 +237,11 @@ namespace TVSeriesAPI.Controllers
         [HttpDelete("{seriesId}/seasons/{seasonId}/episodes/{episodeId}")]
         public async Task<ActionResult> DeleteSeriesSeasonsEpisodes(int seriesId, int seasonId, int episodeId)
         {
-            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons).ThenJoin(seasons => seasons.Episodes).FirstOrDefaultAsync(serie => serie.Id == seriesId);
+            var serie = await (await _serieRepository.GetAllAsync()).Join(s => s.Seasons)
+                .ThenJoin(seasons => seasons.Episodes)
+                .ThenJoin(episodes => episodes.CastMembers)
+                .ThenJoin(episodes => episodes.CastMember)
+                .FirstOrDefaultAsync(serie => serie.Id == seriesId);
             if (serie is null)
             {
                 return NotFound();
