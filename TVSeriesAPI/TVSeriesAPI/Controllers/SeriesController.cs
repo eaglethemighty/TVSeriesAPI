@@ -5,7 +5,7 @@ using System.Diagnostics;
 using TVSeriesAPI.Controllers.Errors;
 using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.DAL.Repositories.Interfaces;
-using TVSeriesAPI.IIncludableEntensions;
+using TVSeriesAPI.IIncludableExtensions;
 using TVSeriesAPI.Models.DTOs;
 using TVSeriesAPI.Models.Entities;
 

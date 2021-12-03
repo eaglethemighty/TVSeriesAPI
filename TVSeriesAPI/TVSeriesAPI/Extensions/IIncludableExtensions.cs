@@ -1,6 +1,6 @@
 ﻿using TVSeriesAPI.DAL.Extensions;
 
-namespace TVSeriesAPI.IIncludableEntensions
+namespace TVSeriesAPI.IIncludableExtensions
 {
     public static class IIncludableExtensions
     {
