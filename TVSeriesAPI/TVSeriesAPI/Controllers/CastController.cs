@@ -124,7 +124,7 @@ namespace TVSeriesAPI.Controllers
             var serieIds = seasonsQuery.Where(x => seasonIds.Contains(x.Id)).Select(x => x.SerieId).ToList().Distinct();
 
             var seriesQuery = await _serieRepository.GetAllAsync();
-            var series = seriesQuery.Join(x => x.Genre).Where(x => serieIds.Contains(x.Id)).ToList().Distinct().ToList();
+            var series = seriesQuery.Where(x => serieIds.Contains(x.Id)).Join(x => x.Genre).ToList().Distinct().ToList();
             if (series is null || series.Count == 0)
             {
                 _logger.LogError("series not found");
