@@ -4,6 +4,8 @@ using TVSeriesAPI.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using TVSeriesAPI.DAL.Repositories.Interfaces;
 using AutoMapper;
+using TVSeriesAPI.DAL.Extensions;
+using TVSeriesAPI.IIncludableEntensions;
 
 namespace TVSeriesAPI.Controllers
 {
@@ -76,7 +78,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult<GenreReadDto>> GetGenre(int id)
         {
             var genres = await _genreRepository.GetAllAsync();
-            var genre = genres.FirstOrDefault(g => g.Id == id);
+            var genre = genres.FirstOrDefaultAsyncCustom(g => g.Id == id);
             if (genre is null)
             {
                 return NotFound();
@@ -103,13 +105,13 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult<ICollection<SerieReadDto>>> GetSeriesOfGenre(int id)
         {
             var genres = await _genreRepository.GetAllAsync();
-            var genre = genres.FirstOrDefault(g => g.Id == id);
+            var genre = genres.FirstOrDefaultAsyncCustom(g => g.Id == id);
             if (genre is null)
             {
                 return NotFound();
             }
             var seriesQuery = await _serieRepository.GetAllAsync();
-            var seriesList = seriesQuery.Where(s => s.GenreId == id).ToList();
+            var seriesList = seriesQuery.Where(s => s.GenreId == id).Join(series => series.Genre).ToListAsyncCustom();
             return Ok(_mapper.Map<ICollection<SerieReadDto>>(seriesList));
         }
 
@@ -169,7 +171,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult> UpdateGenre(int id, GenreUpdateDto genreUpdateDto)
         {
             var genresQuery = await _genreRepository.GetAllAsync();
-            var genreModel = genresQuery.FirstOrDefault(g => g.Id == id);
+            var genreModel = await genresQuery.FirstOrDefaultAsyncCustom(g => g.Id == id);
             if (genreModel is null)
             {
                 return NotFound();
@@ -199,7 +201,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult> DeleteGenre(int id)
         {
             var genres = await _genreRepository.GetAllAsync();
-            var genreModel = genres.FirstOrDefault(g => g.Id == id);
+            var genreModel = await genres.Join(genre=>genre.Series).FirstOrDefaultAsyncCustom(g => g.Id == id);
             if (genreModel == null)
             {
                 return NotFound();
