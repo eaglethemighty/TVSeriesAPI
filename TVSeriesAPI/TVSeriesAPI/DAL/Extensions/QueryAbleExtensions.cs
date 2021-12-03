@@ -36,5 +36,10 @@ namespace TVSeriesAPI.DAL.Extensions
         {
             return await query.FirstOrDefaultAsync(predicate);
         }
+
+        public static async Task<IList<TEntity>> ToListAsyncCustom<TEntity>(this IQueryable<TEntity> query)
+        {
+            return await query.ToListAsync();
+        }
     }
 }
