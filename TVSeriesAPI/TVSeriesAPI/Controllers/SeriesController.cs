@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using TVSeriesAPI.Controllers.Errors;
 using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.DAL.Repositories.Interfaces;
+using TVSeriesAPI.IIncludableEntensions;
 using TVSeriesAPI.Models.DTOs;
 using TVSeriesAPI.Models.Entities;
 
@@ -97,8 +98,8 @@ namespace TVSeriesAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<ICollection<SerieReadDto>>> GetSeries()
         {
-            var seriesQuery = await _serieRepository.GetAllAsync();
-            var series = seriesQuery.Join(x => x.Genre).ToList();
+            var seriesQuery = _serieRepository.GetAllAsync();
+            var series = await (await seriesQuery).Join(x => x.Genre).ToListAsyncCustom();
             if (series is null || series.Count == 0) return NotFound();
 
             return Ok(_mapper.Map<ICollection<SerieReadDto>>(series));
@@ -125,7 +126,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult<SerieReadDto>> GetSeries(int seriesId)
         {
             var seriesQuery = await _serieRepository.GetAllAsync();
-            var serie = seriesQuery.Join(x => x.Genre).FirstOrDefault(x => x.Id == seriesId);
+            Serie? serie = await seriesQuery.Join(x => x.Genre).FirstOrDefaultAsyncCustom(x => x.Id == seriesId);
             if (serie is null) return NotFound();
 
             return Ok(_mapper.Map<SerieReadDto>(serie));
@@ -159,7 +160,7 @@ namespace TVSeriesAPI.Controllers
         {
             var serieEntity = _mapper.Map<Serie>(serie);
             var genreQuery = await _genreRepository.GetAllAsync();
-            if (genreQuery.FirstOrDefault(x => x.Id == serie.GenreId) is null)
+            if (await genreQuery.FirstOrDefaultAsyncCustom(x => x.Id == serie.GenreId) is null)
             {
                 Dictionary<string, string> errors = new() { { "genreId", "Genre does not exist in database." } };
                 return CustomBadRequest(errors);
@@ -207,7 +208,7 @@ namespace TVSeriesAPI.Controllers
                 return CustomBadRequest(errors);
             }
             var serieQuery = await _serieRepository.GetAllAsync();
-            var serieEntity = serieQuery.FirstOrDefault(x => x.Id == seriesId);
+            var serieEntity = await serieQuery.FirstOrDefaultAsyncCustom(x => x.Id == seriesId);
             if (serieEntity is null) return NotFound();
             var updatedSerieEntity = _mapper.Map(serie, serieEntity);
             await _serieRepository.UpdateAsync(updatedSerieEntity);
@@ -239,7 +240,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<IActionResult> DeleteSeries(int seriesId)
         {
             var seriesQuery = await _serieRepository.GetAllAsync();
-            var serie = seriesQuery.FirstOrDefault(x => x.Id == seriesId);
+            var serie = await seriesQuery.FirstOrDefaultAsyncCustom(x => x.Id == seriesId);
             if (serie is null) return NotFound();
             await _serieRepository.DeleteAsync(serie);
             bool result = await _serieRepository.SaveChanges();

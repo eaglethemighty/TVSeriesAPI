@@ -11,8 +11,5 @@ namespace TVSeriesAPI.Models.DTOs
         [Required]
         [Range(0, int.MaxValue)]
         public int Number { get; set; }
-
-        [Required]
-        public int SeasonId { get; set; }
     }
 }

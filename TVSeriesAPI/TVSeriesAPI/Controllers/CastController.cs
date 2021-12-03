@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TVSeriesAPI.DAL.Extensions;
-using TVSeriesAPI.DAL.Repositories;
 using TVSeriesAPI.DAL.Repositories.Interfaces;
 using TVSeriesAPI.Models.DTOs;
 using TVSeriesAPI.Models.Entities;
