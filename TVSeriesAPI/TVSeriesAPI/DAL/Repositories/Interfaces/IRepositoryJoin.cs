@@ -3,16 +3,6 @@ using TVSeriesAPI.DAL.Extensions;
 
 namespace TVSeriesAPI.DAL.Repositories.Interfaces
 {
-    public interface IRepository<TModel>
-    {
-        Task<TModel> GetById(int id);
-        Task<ICollection<TModel>> GetAll();
-        Task AddAsync(TModel obj);
-        Task DeleteAsync(TModel obj);
-        Task UpdateAsync(TModel obj);
-        Task<bool> SaveChanges();
-    }
-
     public interface IRepositoryJoin<TEntity> where TEntity : class
     {
         IIncludableJoin<TEntity, TProperty> Join<TProperty>(Expression<Func<TEntity, TProperty>> navigationProperty);
