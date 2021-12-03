@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVSeriesAPI.DAL.Extensions;
 using TVSeriesAPI.DAL.Repositories.Interfaces;
+using TVSeriesAPI.IIncludableExtensions;
 using TVSeriesAPI.Models.DTOs;
 using TVSeriesAPI.Models.Entities;
 
@@ -56,7 +57,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult<ICollection<CastMemberReadDto>>> GetCast()
         {
             var castMembers = await _castRepository.GetAllAsync();
-            var castMembersList = castMembers.ToList();
+            var castMembersList = await castMembers.ToListAsyncCustom();
             if (castMembersList is null || castMembersList.Count == 0)
             {
                 return NotFound();
@@ -83,7 +84,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult<CastMemberReadDto>> GetCastMember(int id)
         {
             var castMembers = await _castRepository.GetAllAsync();
-            var castMemberModel = castMembers.FirstOrDefault(cm => cm.Id == id);
+            var castMemberModel = await castMembers.FirstOrDefaultAsyncCustom(cm => cm.Id == id);
             if (castMemberModel is null)
             {
                 return NotFound();
@@ -105,31 +106,27 @@ namespace TVSeriesAPI.Controllers
         /// <response code="404">If no cast members exist</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         [HttpGet("{castMemberId}/series")]
         public async Task<ActionResult<ICollection<SerieReadDto>>> GetSeriesWhereCastMember(int castMemberId)
         {
             var castMembersQuery = await _castRepository.GetAllAsync();
-            var castMember = castMembersQuery.Join(x => x.Episodes).FirstOrDefault(x => x.Id == castMemberId);
-            if (castMember is null)
-            {
-                _logger.LogError("cast member not found");
-                return NotFound();
-            }
+            var castMember = await castMembersQuery.Join(x => x.Episodes).FirstOrDefaultAsyncCustom(x => x.Id == castMemberId);
+            if (castMember is null) return NotFound();
             var episodeIds = castMember.Episodes.Select(x => x.Id);
 
             var episodesQuery = await _episodeRepository.GetAllAsync();
-            var seasonIds = episodesQuery.Where(x => episodeIds.Contains(x.Id)).Select(x => x.SeasonId).ToList().Distinct();
+            var episodes = await episodesQuery.Where(x => episodeIds.Contains(x.Id)).ToListAsyncCustom();
+            var seasonIds = episodes.Select(x => x.SeasonId).Distinct();
 
             var seasonsQuery = await _seasonRepository.GetAllAsync();
-            var serieIds = seasonsQuery.Where(x => seasonIds.Contains(x.Id)).Select(x => x.SerieId).ToList().Distinct();
+            var seasons = await seasonsQuery.Where(x => seasonIds.Contains(x.Id)).ToListAsyncCustom();
+            var serieIds = seasons.Select(x => x.SerieId).Distinct();
 
             var seriesQuery = await _serieRepository.GetAllAsync();
-            var series = seriesQuery.Where(x => serieIds.Contains(x.Id)).Join(x => x.Genre).ToList().Distinct().ToList();
-            if (series is null || series.Count == 0)
-            {
-                _logger.LogError("series not found");
-                return NotFound();
-            }
+            var series = await seriesQuery.Where(x => serieIds.Contains(x.Id)).Join(x => x.Genre).ToListAsyncCustom();
+            var uniqueSeries = series.Distinct().ToList();
+            if (series is null || series.Count == 0) return NotFound();
 
             return Ok(_mapper.Map<ICollection<SerieReadDto>>(series));
         }
@@ -193,7 +190,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult> UpdateCastMember(int id, CastMemberUpdateDto castMemberUpdateDto)
         {
             var castQuery = await _castRepository.GetAllAsync();
-            var castModel = castQuery.FirstOrDefault(c => c.Id == id);
+            var castModel = await castQuery.FirstOrDefaultAsyncCustom(c => c.Id == id);
             if (castModel is null)
             {
                 return NotFound();
@@ -223,7 +220,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult> DeleteCastMember(int id)
         {
             var cast = await _castRepository.GetAllAsync();
-            var castModel = cast.FirstOrDefault(c => c.Id == id);
+            var castModel = await cast.FirstOrDefaultAsyncCustom(c => c.Id == id);
             if (castModel == null)
             {
                 return NotFound();
