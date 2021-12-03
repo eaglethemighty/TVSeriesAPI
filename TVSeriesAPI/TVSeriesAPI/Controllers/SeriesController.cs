@@ -64,19 +64,19 @@ namespace TVSeriesAPI.Controllers
             var seriesQuery = await _serieRepository.GetAllAsync();
             var series = seriesQuery.Join(x => x.Genre).ToList();
 
-            var paginatedSeries = series.Skip((query.Page - 1) * _seriesPerPage).Take(_seriesPerPage).ToList();
-
             var filteredSeries = (query.Filter == "*")
-                ? paginatedSeries
-                : paginatedSeries.Where(s => s.Title.Contains(query.Filter)).ToList();
+                ? series
+                : series.Where(s => s.Title.Contains(query.Filter)).ToList();
 
             var sortedSeries = (query.Sort)
                 ? filteredSeries.OrderBy(s => s.Title).ToList()
                 : filteredSeries;
 
-            if (sortedSeries is null || sortedSeries.Count == 0) return NotFound();
+            var paginatedSeries = sortedSeries.Skip((query.Page - 1) * _seriesPerPage).Take(_seriesPerPage).ToList();
 
-            return Ok(_mapper.Map<ICollection<SerieReadDto>>(sortedSeries));
+            if (paginatedSeries is null || paginatedSeries.Count == 0) return NotFound();
+
+            return Ok(_mapper.Map<ICollection<SerieReadDto>>(paginatedSeries));
         }
 
         /// <summary>
