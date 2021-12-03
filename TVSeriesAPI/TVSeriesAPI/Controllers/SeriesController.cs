@@ -62,7 +62,7 @@ namespace TVSeriesAPI.Controllers
         public async Task<ActionResult<ICollection<SerieReadDto>>> GetSeries([FromQuery] SerieQuery query)
         {
             var seriesQuery = await _serieRepository.GetAllAsync();
-            var series = seriesQuery.Join(x => x.Genre).ToList();
+            var series = await seriesQuery.Join(x => x.Genre).ToListAsyncCustom();
 
             var filteredSeries = (query.Filter == "*")
                 ? series
